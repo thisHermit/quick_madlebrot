@@ -26,28 +26,26 @@ func mandle_brot() {
 	color := 0.0
 	points := 0
 	grad, _ := colorgrad.NewGradient().
-		HtmlColors("#000000", "#ffffff", "#4775de").
+		HtmlColors("#000000", "#ffffff", "#4770FF").
 		Build()
 
-	dc := gg.NewContext(int(math.Abs(2*max_lim)), int(max_lim))
+	dc := gg.NewContext(int(math.Abs(1.5*max_lim)), int(max_lim))
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
 
-	bar := progressbar.Default(int64(upper_lim * upper_lim))
+	bar := progressbar.Default(int64(math.Pow((upper_lim-lower_lim)/granularity, 2)))
 	for x := lower_lim; x < upper_lim; x += granularity {
 		for y := lower_lim; y < upper_lim; y += granularity {
 			c := complex(x/max_lim+x_offset, y/max_lim)
 			// println("before x,y=", x, y)
 			draw_x, draw_y := transform_coords(x, y, max_lim, granularity)
 			color = base_fractal_func(0, 2, c)
-			if color != 1 {
-				color_tuple := grad.At(color)
-				dc.SetRGB(color_tuple.R, color_tuple.G, color_tuple.B)
-				// println("after x,y=", draw_x, draw_y)
-				dc.DrawRectangle(draw_x, draw_y, scaling, scaling)
-				dc.Fill()
-			}
+			color_tuple := grad.At(color)
+			dc.SetRGB(color_tuple.R, color_tuple.G, color_tuple.B)
+			// println("after x,y=", draw_x, draw_y)
+			dc.DrawRectangle(draw_x, draw_y, scaling, scaling)
+			dc.Fill()
 			points++
 			// println("color=", color)
 			// println("points=", points)
@@ -64,18 +62,14 @@ func base_fractal_func(z complex128, exp complex128, c complex128) float64 {
 	// println("z=", z)
 	// println("exp=", exp)
 	// println("c=", c)
-	epsilon := 1e-4
 
-	max_num := 10000
+	max_num := 100_000
 	for i := range max_num {
 		z = cmplx.Pow(z, exp) + c
 		// println("z=", z)
 		if real(z) > math.MaxFloat64 || imag(z) > math.MaxFloat64 {
 			// println("broke here z=", z)
 			// println("i=", i)
-			if math.Abs(float64(max_num-i+1)/float64(max_num)) < epsilon {
-				return 1
-			}
 			return float64(max_num-i+1) / float64(max_num)
 		}
 	}
