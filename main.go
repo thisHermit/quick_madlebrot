@@ -18,15 +18,15 @@ func main() {
 
 func mandle_brot() {
 	x_offset := -1.5
-	max_lim := 1000.0
+	max_lim := 500.0
 	lower_lim := -2 * max_lim
 	upper_lim := 2 * max_lim
 	granularity := 10.0
-	scaling := granularity / 2 // 100 => 25.0
+	scaling := granularity / 4 // 100 => 25.0
 	color := 0.0
 	points := 0
 	grad, _ := colorgrad.NewGradient().
-		HtmlColors("#000000", "#ffffff", "#4770FF").
+		HtmlColors("#000000", "#ffffff", "#ff7f00").
 		Build()
 
 	dc := gg.NewContext(int(math.Abs(1.5*max_lim)), int(max_lim))
@@ -44,7 +44,8 @@ func mandle_brot() {
 			color_tuple := grad.At(color)
 			dc.SetRGB(color_tuple.R, color_tuple.G, color_tuple.B)
 			// println("after x,y=", draw_x, draw_y)
-			dc.DrawRectangle(draw_x, draw_y, scaling, scaling)
+			dc.DrawCircle(draw_x, draw_y, scaling)
+			// dc.SetPixel(int(draw_x), int(draw_y))
 			dc.Fill()
 			points++
 			// println("color=", color)
